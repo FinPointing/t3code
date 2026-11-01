@@ -24,6 +24,10 @@ public class T3TerminalModule: Module {
         view.initialBuffer = initialBuffer
       }
 
+      Prop("fontFamily") { (view: T3TerminalView, fontFamily: String) in
+        view.fontFamily = fontFamily
+      }
+
       Prop("fontSize") { (view: T3TerminalView, fontSize: Double) in
         view.fontSize = CGFloat(fontSize)
       }

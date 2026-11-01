@@ -2,7 +2,10 @@ import { afterEach, expect, it, vi } from "vite-plus/test";
 
 // Keep config parsing independent of local env files and build credentials.
 vi.mock("../../scripts/lib/public-config.ts", () => ({
-  loadRepoEnv: () => ({ APP_VARIANT: process.env.APP_VARIANT }),
+  loadRepoEnv: () => ({
+    APP_VARIANT: process.env.APP_VARIANT,
+    T3CODE_ANDROID_DEMO: process.env.T3CODE_ANDROID_DEMO,
+  }),
 }));
 
 afterEach(() => {
@@ -30,4 +33,13 @@ it.each([
   const config = await loadConfig(value);
   expect(config.ios?.bundleIdentifier).toBe(identifier);
   expect(config.android?.package).toBe(identifier);
+});
+
+it("isolates the Android demo package and disables upstream updates", async () => {
+  vi.stubEnv("T3CODE_ANDROID_DEMO", "1");
+  const config = await loadConfig("preview");
+  expect(config.name).toBe("T3 Appearance Demo");
+  expect(config.android?.package).toBe("com.finpointing.t3code.appearance");
+  expect(config.scheme).toBe("t3-appearance-demo");
+  expect(config.updates?.enabled).toBe(false);
 });

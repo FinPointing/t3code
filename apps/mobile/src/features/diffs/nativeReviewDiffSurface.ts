@@ -93,6 +93,7 @@ export interface NativeReviewDiffStyle {
   readonly fileHeaderCountGap?: number;
   readonly codeFontSize?: number;
   readonly codeFontWeight?: string;
+  readonly codeFontFamily?: string;
   readonly lineNumberFontSize?: number;
   readonly lineNumberFontWeight?: string;
   readonly hunkFontSize?: number;
@@ -107,6 +108,7 @@ export interface NativeReviewDiffStyle {
   readonly fileHeaderStatusFontWeight?: string;
   readonly emptyStateFontSize?: number;
   readonly emptyStateFontWeight?: string;
+  readonly wordWrap?: boolean;
 }
 
 export interface NativeReviewDiffViewProps extends ViewProps {

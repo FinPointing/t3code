@@ -622,6 +622,7 @@ internal data class DiffTheme(
 }
 
 internal data class DiffStyle(
+  val codeFontFamily: String,
   val wordWrap: Boolean,
   val rowHeightPx: Float,
   val gutterWidthPx: Float,
@@ -644,6 +645,7 @@ internal data class DiffStyle(
 ) {
   companion object {
     fun defaults(density: Float): DiffStyle = DiffStyle(
+      codeFontFamily = "monospace",
       wordWrap = false,
       rowHeightPx = 20f * density,
       gutterWidthPx = 72f * density,
@@ -668,6 +670,7 @@ internal data class DiffStyle(
     fun fromJson(value: String, fallback: DiffStyle, density: Float): DiffStyle = try {
       val json = JSONObject(value)
       DiffStyle(
+        codeFontFamily = json.optString("codeFontFamily", fallback.codeFontFamily),
         wordWrap = json.optBoolean("wordWrap", fallback.wordWrap),
         rowHeightPx = json.floatDp("rowHeight", fallback.rowHeightPx, density),
         gutterWidthPx = json.floatDp("gutterWidth", fallback.gutterWidthPx, density),
@@ -830,6 +833,7 @@ private class DiffCanvasView(context: Context) : View(context) {
   var style: DiffStyle = DiffStyle.defaults(density)
     set(value) {
       field = value
+      drawing.fontFamily = value.codeFontFamily
       rebuildOffsets()
     }
   var onRowTap: ((DiffRow, String, RowTapTarget) -> Unit)? = null

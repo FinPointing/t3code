@@ -47,7 +47,11 @@ vi.mock("react-native", () => ({ View: ({ children }: { children: ReactNode }) =
 vi.mock("../../components/ui/AppText", () => ({ AppText: () => null }));
 vi.mock("../../lib/typography", () => ({ MOBILE_TYPOGRAPHY: { label: { fontSize: 10 } } }));
 vi.mock("../settings/appearance/AppearancePreferencesProvider", () => ({
-  useAppearancePreferences: () => ({ themeAppearance: "dark", themeId: "default" }),
+  useAppearancePreferences: () => ({
+    themeAppearance: "dark",
+    themeId: "default",
+    fonts: { terminalFontId: null, terminal: "MesloLGS NF" },
+  }),
 }));
 vi.mock("./terminalTheme", () => ({
   buildGhosttyThemeConfig: () => "theme",

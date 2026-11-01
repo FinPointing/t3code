@@ -9,6 +9,7 @@ const repoEnv = loadRepoEnv();
 Object.assign(process.env, repoEnv);
 
 const APP_VARIANT = resolveAppVariant(repoEnv.APP_VARIANT);
+const isAndroidDemo = repoEnv.T3CODE_ANDROID_DEMO === "1";
 const isIosPersonalTeamBuild = repoEnv.T3CODE_IOS_PERSONAL_TEAM === "1";
 const runtimeVersionPolicy =
   process.env.MOBILE_VERSION_POLICY ??
@@ -126,6 +127,15 @@ const dmSansFonts = {
   bold: "@expo-google-fonts/dm-sans/700Bold/DMSans_700Bold.ttf",
 } as const;
 
+const mesloFonts = {
+  regular: fromRepoRoot(
+    "apps/mobile/modules/t3-terminal/android/src/main/assets/fonts/MesloLGS-NF-Regular.ttf",
+  ),
+  bold: fromRepoRoot(
+    "apps/mobile/modules/t3-terminal/android/src/main/assets/fonts/MesloLGS-NF-Bold.ttf",
+  ),
+} as const;
+
 const widgetsPlugin: NonNullable<ExpoConfig["plugins"]>[number] = [
   "expo-widgets",
   {
@@ -224,10 +234,10 @@ const sharingPlugin: NonNullable<ExpoConfig["plugins"]>[number] = [
 // Match iOS PostScript names on Android so RN and the native composer share fonts before runtime loading.
 
 const config: ExpoConfig = {
-  name: variant.appName,
+  name: isAndroidDemo ? "T3 Appearance Demo" : variant.appName,
   slug: "t3-code",
   platforms: ["ios", "android"],
-  scheme: variant.scheme,
+  scheme: isAndroidDemo ? "t3-appearance-demo" : variant.scheme,
   version: repoEnv.T3CODE_MOBILE_VERSION ?? "2.2.0",
   runtimeVersion: {
     // Skip costly fingerprinting on dev launches; preview and production OTAs require matching native projects.
@@ -237,7 +247,7 @@ const config: ExpoConfig = {
   icon: variant.assets.appIcon,
   userInterfaceStyle: "automatic",
   updates: {
-    enabled: repoEnv.T3CODE_MOBILE_UPDATES_ENABLED !== "0",
+    enabled: !isAndroidDemo && repoEnv.T3CODE_MOBILE_UPDATES_ENABLED !== "0",
     url: "https://u.expo.dev/d763fcb8-d37c-41ea-a773-b54a0ab4a454",
     checkAutomatically: "ON_LOAD",
     fallbackToCacheTimeout: 0,
@@ -286,7 +296,7 @@ const config: ExpoConfig = {
   },
   android: {
     icon: variant.assets.appIcon,
-    package: variant.androidPackage,
+    package: isAndroidDemo ? "com.finpointing.t3code.appearance" : variant.androidPackage,
     ...(repoEnv.T3CODE_ANDROID_GOOGLE_SERVICES_FILE
       ? { googleServicesFile: repoEnv.T3CODE_ANDROID_GOOGLE_SERVICES_FILE }
       : {}),
@@ -313,7 +323,13 @@ const config: ExpoConfig = {
       "expo-font",
       {
         ios: {
-          fonts: [dmSansFonts.regular, dmSansFonts.medium, dmSansFonts.bold],
+          fonts: [
+            dmSansFonts.regular,
+            dmSansFonts.medium,
+            dmSansFonts.bold,
+            mesloFonts.regular,
+            mesloFonts.bold,
+          ],
         },
         android: {
           fonts: [
@@ -328,6 +344,13 @@ const config: ExpoConfig = {
             {
               fontFamily: "DMSans-Bold",
               fontDefinitions: [{ path: dmSansFonts.bold, weight: 700 }],
+            },
+            {
+              fontFamily: "MesloLGS NF",
+              fontDefinitions: [
+                { path: mesloFonts.regular, weight: 400 },
+                { path: mesloFonts.bold, weight: 700 },
+              ],
             },
           ],
         },

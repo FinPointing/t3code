@@ -11,9 +11,12 @@ import {
   TerminalAppearancePreview,
 } from "../components/AppearancePreviews";
 import { FontSizeSliderRow } from "../components/FontSizeSliderRow";
+import { FontFamilyRow } from "../components/FontFamilyRow";
+import { MOBILE_MONO_FONT_IDS, MOBILE_MONO_FONT_LABELS } from "../../../../lib/appearanceFonts";
 
 export function TerminalAppearanceSection() {
-  const { isReady, appearance, setTerminalFontSize } = useAppearancePreferences();
+  const { isReady, appearance, fonts, setFontPreferences, setTerminalFontSize } =
+    useAppearancePreferences();
   const custom = appearance.isTerminalFontSizeCustom;
 
   const handleToggleCustom = (enabled: boolean) => {
@@ -24,6 +27,16 @@ export function TerminalAppearanceSection() {
     <SettingsSection title="Terminal">
       <TerminalAppearancePreview fontSize={appearance.terminalFontSize} />
       <AppearancePreviewSeparator />
+      <FontFamilyRow
+        label="Terminal font"
+        value={fonts.terminalFontId}
+        options={[
+          { id: null, title: "Default (Meslo)" },
+          ...MOBILE_MONO_FONT_IDS.map((id) => ({ id, title: MOBILE_MONO_FONT_LABELS[id] })),
+        ]}
+        disabled={!isReady}
+        onChange={(terminalFontFamily) => setFontPreferences({ terminalFontFamily })}
+      />
       <SettingsSwitchRow
         disabled={!isReady}
         icon="terminal"

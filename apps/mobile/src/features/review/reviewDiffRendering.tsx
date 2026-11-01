@@ -1,16 +1,11 @@
-import { Platform, Text as NativeText, View } from "react-native";
+import { Text as NativeText, View } from "react-native";
 
+import { useAppearancePreferences } from "../settings/appearance/AppearancePreferencesProvider";
 import { cn } from "../../lib/cn";
 import { MOBILE_CODE_SURFACE } from "../../lib/typography";
 
 import type { ReviewRenderableLineRow } from "./reviewModel";
 import type { ReviewHighlightedToken } from "./reviewHighlightedToken.types";
-
-export const REVIEW_MONO_FONT_FAMILY = Platform.select({
-  ios: "ui-monospace",
-  android: "monospace",
-  default: "monospace",
-});
 
 const REVIEW_DIFF_LINE_HEIGHT = MOBILE_CODE_SURFACE.rowHeight;
 
@@ -72,6 +67,7 @@ export function DiffTokenText(props: {
   readonly fontSize?: number;
   readonly lineHeight?: number;
 }) {
+  const { fonts } = useAppearancePreferences();
   const fontSize = props.fontSize ?? MOBILE_CODE_SURFACE.fontSize;
   const lineHeight = props.lineHeight ?? MOBILE_CODE_SURFACE.rowHeight;
   if (!props.tokens || props.tokens.length === 0) {
@@ -81,7 +77,7 @@ export function DiffTokenText(props: {
         selectable
         className={cn("font-normal text-foreground", props.className)}
         style={{
-          fontFamily: REVIEW_MONO_FONT_FAMILY,
+          fontFamily: fonts.code,
           fontSize,
           lineHeight,
         }}
@@ -97,7 +93,7 @@ export function DiffTokenText(props: {
       selectable
       className={cn("font-normal text-foreground", props.className)}
       style={{
-        fontFamily: REVIEW_MONO_FONT_FAMILY,
+        fontFamily: fonts.code,
         fontSize,
         lineHeight,
       }}
@@ -123,7 +119,7 @@ export function DiffTokenText(props: {
               selectable
               style={{
                 color: token.color ?? undefined,
-                fontFamily: REVIEW_MONO_FONT_FAMILY,
+                fontFamily: fonts.code,
                 fontWeight,
                 fontStyle,
                 backgroundColor:

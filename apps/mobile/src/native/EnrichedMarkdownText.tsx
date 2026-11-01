@@ -36,8 +36,8 @@ function enrichedStyle(
   style: SelectableMarkdownTextProps["textStyle"],
   dark: boolean,
   fontScale: number,
+  monospace: string,
 ): MarkdownStyle {
-  const monospace = Platform.OS === "ios" ? "Menlo" : "monospace";
   // Keep the radius modest: iOS clips square table-cell borders without stroking the corner arcs.
   const block = {
     marginTop: 4,
@@ -60,6 +60,7 @@ function enrichedStyle(
       ...body,
       color: style.strongColor,
       fontFamily: style.headingFontFamily,
+      fontWeight: style.headingFontFamily === "DMSans-Bold" ? "normal" : "bold",
       fontSize,
       lineHeight: fontSize * 1.35,
       marginTop: 8,
@@ -82,7 +83,11 @@ function enrichedStyle(
     h4: heading(4),
     h5: heading(5),
     h6: heading(6),
-    strong: { color: style.strongColor, fontFamily: style.boldFontFamily, fontWeight: "normal" },
+    strong: {
+      color: style.strongColor,
+      fontFamily: style.boldFontFamily,
+      fontWeight: style.boldFontFamily === "DMSans-Bold" ? "normal" : "bold",
+    },
     link: { color: style.linkColor, underline: false },
     code: {
       fontFamily: monospace,
@@ -163,7 +168,7 @@ function enrichedStyle(
 
 export function MobileEnrichedMarkdownText(props: SelectableMarkdownTextProps) {
   const { renderImage, resolveImageSource, fileEmbedLabel } = props;
-  const { themeAppearance, mathRenderingEnabled } = useAppearancePreferences();
+  const { themeAppearance, mathRenderingEnabled, fonts } = useAppearancePreferences();
   const { markdown, fileHrefs } = useMemo(() => {
     if (!fileEmbedLabel) {
       return {
@@ -266,10 +271,10 @@ export function MobileEnrichedMarkdownText(props: SelectableMarkdownTextProps) {
   const { fontScale } = useWindowDimensions();
   const markdownStyle = useMemo(
     () => ({
-      ...enrichedStyle(props.textStyle, themeAppearance === "dark", fontScale),
+      ...enrichedStyle(props.textStyle, themeAppearance === "dark", fontScale, fonts.code),
       linkVariants,
     }),
-    [props.textStyle, themeAppearance, fontScale, linkVariants],
+    [props.textStyle, themeAppearance, fontScale, linkVariants, fonts.code],
   );
   const renderers = renderImage
     ? {

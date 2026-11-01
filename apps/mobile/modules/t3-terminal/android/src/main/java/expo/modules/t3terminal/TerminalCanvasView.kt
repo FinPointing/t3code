@@ -23,22 +23,26 @@ import kotlin.math.min
 
 internal object TerminalTypefaces {
   private var loaded = false
-  var regular: Typeface = Typeface.MONOSPACE
-    private set
-  var bold: Typeface = Typeface.create(Typeface.MONOSPACE, Typeface.BOLD)
-    private set
+  private var mesloRegular: Typeface = Typeface.MONOSPACE
+  private var mesloBold: Typeface = Typeface.create(Typeface.MONOSPACE, Typeface.BOLD)
 
   @Suppress("TooGenericExceptionCaught") // Typeface.createFromAsset exposes RuntimeException.
   fun ensureLoaded(context: Context) {
     if (loaded) return
     loaded = true
     try {
-      regular = Typeface.createFromAsset(context.assets, "fonts/MesloLGS-NF-Regular.ttf")
-      bold = Typeface.createFromAsset(context.assets, "fonts/MesloLGS-NF-Bold.ttf")
+      mesloRegular = Typeface.createFromAsset(context.assets, "fonts/MesloLGS-NF-Regular.ttf")
+      mesloBold = Typeface.createFromAsset(context.assets, "fonts/MesloLGS-NF-Bold.ttf")
     } catch (error: RuntimeException) {
       Log.w("TerminalCanvasView", "bundled terminal font unavailable, using monospace", error)
     }
   }
+
+  fun getRegular(family: String): Typeface =
+    if (family == "system") Typeface.MONOSPACE else mesloRegular
+
+  fun getBold(family: String): Typeface =
+    if (family == "system") Typeface.create(Typeface.MONOSPACE, Typeface.BOLD) else mesloBold
 }
 
 /**
@@ -80,10 +84,10 @@ internal class TerminalCanvasView(context: Context) : View(context) {
     TerminalTypefaces.ensureLoaded(context)
   }
 
-  private val regularTypeface = TerminalTypefaces.regular
-  private val boldTypeface = TerminalTypefaces.bold
-  private val italicTypeface = Typeface.create(TerminalTypefaces.regular, Typeface.ITALIC)
-  private val boldItalicTypeface = Typeface.create(TerminalTypefaces.bold, Typeface.ITALIC)
+  private var regularTypeface = TerminalTypefaces.getRegular("meslo")
+  private var boldTypeface = TerminalTypefaces.getBold("meslo")
+  private var italicTypeface = Typeface.create(regularTypeface, Typeface.ITALIC)
+  private var boldItalicTypeface = Typeface.create(boldTypeface, Typeface.ITALIC)
   private val gestureDetector = GestureDetector(context, TerminalGestureListener())
   private val contentPadding = 8f * density
   private var frame: TerminalFrame? = null
@@ -151,6 +155,14 @@ internal class TerminalCanvasView(context: Context) : View(context) {
     set(value) {
       if (field == value) return
       field = value
+      updateCellMetrics()
+    }
+
+  var fontFamily: String = "meslo"
+    set(value) {
+      if (field == value) return
+      field = value
+      updateTypefaces()
       updateCellMetrics()
     }
 
@@ -280,6 +292,13 @@ internal class TerminalCanvasView(context: Context) : View(context) {
     removeCallbacks(flingRunnable)
     actionMode?.finish()
     super.onDetachedFromWindow()
+  }
+
+  private fun updateTypefaces() {
+    regularTypeface = TerminalTypefaces.getRegular(fontFamily)
+    boldTypeface = TerminalTypefaces.getBold(fontFamily)
+    italicTypeface = Typeface.create(regularTypeface, Typeface.ITALIC)
+    boldItalicTypeface = Typeface.create(boldTypeface, Typeface.ITALIC)
   }
 
   private fun updateCellMetrics() {

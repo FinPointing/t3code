@@ -21,7 +21,7 @@ import {
   resolveNativeReviewDiffView,
 } from "../diffs/nativeReviewDiffSurface";
 import { createNativeReviewDiffTheme } from "../review/nativeReviewDiffAdapter";
-import { REVIEW_MONO_FONT_FAMILY, renderVisibleWhitespace } from "../review/reviewDiffRendering";
+import { renderVisibleWhitespace } from "../review/reviewDiffRendering";
 import type { HighlightedToken } from "../../lib/highlights";
 import { cn } from "../../lib/cn";
 import type { ResolvedMobileCodeSurface } from "../../lib/appearancePreferences";
@@ -59,6 +59,7 @@ const HighlightedSourceLine = function HighlightedSourceLine(props: {
   readonly highlighted: boolean;
   readonly wordBreak: boolean;
 }) {
+  const { fonts } = useAppearancePreferences();
   return (
     <View
       className={cn("flex-row", props.highlighted && "bg-primary/10")}
@@ -68,7 +69,7 @@ const HighlightedSourceLine = function HighlightedSourceLine(props: {
         className="select-none pr-3 text-right text-foreground-tertiary"
         style={{
           width: props.codeSurface.gutterWidth,
-          fontFamily: REVIEW_MONO_FONT_FAMILY,
+          fontFamily: fonts.code,
           fontSize: props.codeSurface.lineNumberFontSize,
           lineHeight: props.codeSurface.rowHeight,
         }}
@@ -81,7 +82,7 @@ const HighlightedSourceLine = function HighlightedSourceLine(props: {
         numberOfLines={props.wordBreak ? undefined : 1}
         className="flex-1 font-normal text-foreground"
         style={{
-          fontFamily: REVIEW_MONO_FONT_FAMILY,
+          fontFamily: fonts.code,
           fontSize: props.codeSurface.fontSize,
           lineHeight: props.codeSurface.rowHeight,
           minWidth: props.wordBreak ? undefined : 320,
@@ -112,7 +113,7 @@ const HighlightedSourceLine = function HighlightedSourceLine(props: {
                     }
                     style={{
                       color: token.color ?? undefined,
-                      fontFamily: REVIEW_MONO_FONT_FAMILY,
+                      fontFamily: fonts.code,
                       fontWeight,
                       fontStyle,
                     }}
@@ -238,7 +239,7 @@ function NativeSourceFileSurface(
 function JavaScriptSourceFileSurface(props: SourceFileSurfaceProps) {
   const usesAutomaticInsets = Platform.OS === "ios" && !props.embedded;
   const foreground = useUniwindTheme()["--color-foreground"];
-  const { codeSurface, codeWordBreak } = useAppearanceCodeSurface();
+  const { codeSurface, codeWordBreak, codeFontFamily } = useAppearanceCodeSurface();
   const { normalizedContents, lines, status, targetIndex, tokens } = useSourceFileModel(props);
   const selectableTokens = props.selectable ? boundedSelectableSourceTokens(tokens) : null;
   const listRef = useRef<FlatList<string>>(null);
@@ -277,7 +278,7 @@ function JavaScriptSourceFileSurface(props: SourceFileSurfaceProps) {
       selectionColorClassName={Platform.OS === "android" ? "accent-focus/32" : undefined}
       style={{
         color: foreground,
-        fontFamily: REVIEW_MONO_FONT_FAMILY,
+        fontFamily: codeFontFamily,
         fontSize: codeSurface.fontSize,
         lineHeight: codeSurface.rowHeight,
       }}

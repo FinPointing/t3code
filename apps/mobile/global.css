@@ -41,10 +41,12 @@
 
 /* ─── Custom utilities ──────────────────────────────────────────────── */
 @utility font-t3-medium {
+  font-weight: 500;
   font-family: var(--font-medium);
 }
 
 @utility font-t3-bold {
+  font-weight: 700;
   font-family: var(--font-bold);
 }
 

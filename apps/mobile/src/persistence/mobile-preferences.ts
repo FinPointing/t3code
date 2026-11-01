@@ -19,6 +19,11 @@ import type { ComposerEnterBehavior } from "../lib/composerEnterBehavior";
 import type { FollowUpBehavior } from "../lib/followUpBehavior";
 import { isMicrophoneKind, type MicrophoneEntry } from "../lib/microphonePriority";
 import { MOBILE_THEME_IDS, type MobileThemeId, type MobileThemeMode } from "../lib/mobileTheme";
+import {
+  isMobileMonoFontId,
+  isMobileTextFontId,
+  type MobileFontPreferences,
+} from "../lib/appearanceFonts";
 import * as MobileDatabase from "./mobile-database";
 import * as MobileSecureStorage from "./mobile-secure-storage";
 import { MobileStorageDecodeError, MobileStorageEncodeError } from "./mobile-storage";
@@ -86,7 +91,7 @@ const ThreadProject = Schema.Struct({
 });
 const isThreadProject = Schema.is(ThreadProject);
 
-export interface Preferences {
+export interface Preferences extends MobileFontPreferences {
   readonly navigationTabOrder?: readonly string[];
   readonly hiddenNavigationTabs?: readonly string[];
   readonly pullRequestHideTestFiles?: boolean;
@@ -180,6 +185,11 @@ function sanitizePreferences(parsed: Preferences): Preferences {
     themeMode?: MobileThemeMode;
     androidNavigationStyle?: AndroidNavigationStyle;
     baseFontSize?: number;
+    interfaceFontFamily?: MobileFontPreferences["interfaceFontFamily"];
+    promptFontFamily?: MobileFontPreferences["promptFontFamily"];
+    codeFontFamily?: MobileFontPreferences["codeFontFamily"];
+    terminalFontFamily?: MobileFontPreferences["terminalFontFamily"];
+    promptFontSize?: MobileFontPreferences["promptFontSize"];
     terminalFontSize?: number | null;
     markdownFontSize?: number;
     codeFontSize?: number | null;
@@ -263,6 +273,18 @@ function sanitizePreferences(parsed: Preferences): Preferences {
     preferences.androidNavigationStyle = parsed.androidNavigationStyle;
   }
   if (typeof parsed.baseFontSize === "number") preferences.baseFontSize = parsed.baseFontSize;
+  if (isMobileTextFontId(parsed.interfaceFontFamily))
+    preferences.interfaceFontFamily = parsed.interfaceFontFamily;
+  if (isMobileTextFontId(parsed.promptFontFamily) || parsed.promptFontFamily === null)
+    preferences.promptFontFamily = parsed.promptFontFamily;
+  if (isMobileMonoFontId(parsed.codeFontFamily)) preferences.codeFontFamily = parsed.codeFontFamily;
+  if (isMobileMonoFontId(parsed.terminalFontFamily) || parsed.terminalFontFamily === null)
+    preferences.terminalFontFamily = parsed.terminalFontFamily;
+  if (
+    (typeof parsed.promptFontSize === "number" && Number.isFinite(parsed.promptFontSize)) ||
+    parsed.promptFontSize === null
+  )
+    preferences.promptFontSize = parsed.promptFontSize;
   if (typeof parsed.terminalFontSize === "number" || parsed.terminalFontSize === null) {
     preferences.terminalFontSize = parsed.terminalFontSize;
   }

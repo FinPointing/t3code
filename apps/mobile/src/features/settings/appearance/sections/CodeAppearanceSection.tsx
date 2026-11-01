@@ -11,9 +11,12 @@ import {
   CodeAppearancePreview,
 } from "../components/AppearancePreviews";
 import { FontSizeSliderRow } from "../components/FontSizeSliderRow";
+import { FontFamilyRow } from "../components/FontFamilyRow";
+import { MOBILE_MONO_FONT_IDS, MOBILE_MONO_FONT_LABELS } from "../../../../lib/appearanceFonts";
 
 export function CodeAppearanceSection() {
-  const { isReady, appearance, setCodeFontSize, setCodeWordBreak } = useAppearancePreferences();
+  const { isReady, appearance, fonts, setFontPreferences, setCodeFontSize, setCodeWordBreak } =
+    useAppearancePreferences();
   const custom = appearance.isCodeFontSizeCustom;
 
   const handleToggleCustom = (enabled: boolean) => {
@@ -27,6 +30,13 @@ export function CodeAppearanceSection() {
         wordBreak={appearance.codeWordBreak}
       />
       <AppearancePreviewSeparator />
+      <FontFamilyRow
+        label="Code font"
+        value={fonts.codeFontId}
+        options={MOBILE_MONO_FONT_IDS.map((id) => ({ id, title: MOBILE_MONO_FONT_LABELS[id] }))}
+        disabled={!isReady}
+        onChange={(codeFontFamily) => setFontPreferences({ codeFontFamily })}
+      />
       <SettingsSwitchRow
         disabled={!isReady}
         icon="chevron.left.forwardslash.chevron.right"

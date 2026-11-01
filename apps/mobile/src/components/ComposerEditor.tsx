@@ -1,3 +1,6 @@
+import { useAppearancePreferences } from "../features/settings/appearance/AppearancePreferencesProvider";
+import { scaledTypographyLineHeight } from "../lib/appearancePreferences";
+import { MOBILE_TYPOGRAPHY } from "../lib/typography";
 import * as Dialog from "./ui/Dialog";
 import { ComposerContextId } from "@t3tools/contracts";
 import { useAtomValue } from "@effect/atom-react";
@@ -56,6 +59,7 @@ export function ComposerEditor({
   onInertChipPress,
   ...props
 }: ComposerEditorProps) {
+  const { fonts } = useAppearancePreferences();
   const draft = useComposerDraft(draftKey ?? null);
   const preferencesResult = useAtomValue(mobilePreferencesAtom);
   const preferredEnterBehavior = AsyncResult.isSuccess(preferencesResult)
@@ -177,6 +181,14 @@ export function ComposerEditor({
       <NativeComposerEditor
         key={hidden ? "hidden" : "visible"}
         {...props}
+        textStyle={[
+          props.textStyle,
+          {
+            fontFamily: fonts.prompt.regular,
+            fontSize: fonts.promptFontSize,
+            lineHeight: scaledTypographyLineHeight(MOBILE_TYPOGRAPHY.body, fonts.promptFontSize),
+          },
+        ]}
         enterBehavior={props.enterBehavior ?? preferredEnterBehavior}
         onChangeText={changeText}
         readOnly={props.readOnly || importing}

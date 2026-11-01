@@ -9,7 +9,7 @@ import { formatComposerContextReference } from "@t3tools/shared/composerContextR
 import { useState } from "react";
 import { Platform, Pressable, ScrollView, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { REVIEW_MONO_FONT_FAMILY } from "../review/reviewDiffRendering";
+import { useAppearancePreferences } from "../settings/appearance/AppearancePreferencesProvider";
 import { AppText as Text } from "../../components/ui/AppText";
 import { Sheet } from "../../components/ui/Sheet";
 import { Button } from "../../components/ui/Button";
@@ -25,6 +25,7 @@ export function TerminalContextSheet(props: {
   onClose: () => void;
   onAttach: () => void;
 }) {
+  const { fonts } = useAppearancePreferences();
   const insets = useSafeAreaInsets();
   const lines = props.text.replace(/\n+$/, "").split("\n");
   const [range, setRange] = useState({ start: 0, end: lines.length - 1 });
@@ -91,13 +92,13 @@ export function TerminalContextSheet(props: {
               >
                 <Text
                   className="w-8 text-right text-sm text-foreground-muted"
-                  style={{ fontFamily: REVIEW_MONO_FONT_FAMILY }}
+                  style={{ fontFamily: fonts.terminal }}
                 >
                   {index + 1}
                 </Text>
                 <Text
                   className="flex-1 text-sm text-foreground"
-                  style={{ fontFamily: REVIEW_MONO_FONT_FAMILY }}
+                  style={{ fontFamily: fonts.terminal }}
                 >
                   {line || " "}
                 </Text>

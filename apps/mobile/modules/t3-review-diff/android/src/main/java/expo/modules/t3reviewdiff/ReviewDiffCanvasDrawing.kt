@@ -15,6 +15,13 @@ import kotlin.math.max
 import kotlin.math.min
 
 internal class ReviewDiffCanvasDrawing(context: Context) {
+  private val typefaces = ReviewDiffTypefaces(context)
+  var fontFamily: String
+    get() = typefaces.fontFamily
+    set(value) {
+      typefaces.fontFamily = value
+    }
+
   private val density = context.resources.displayMetrics.density
   var theme: DiffTheme = DiffTheme.fallback("light")
 
@@ -31,15 +38,11 @@ internal class ReviewDiffCanvasDrawing(context: Context) {
     clearShadowLayer()
   }
 
-  private val italicCodeTypeface by lazy {
-    Typeface.create(ReviewDiffTypefaces.regular, Typeface.ITALIC)
-  }
-  private val boldItalicCodeTypeface by lazy {
-    Typeface.create(ReviewDiffTypefaces.bold, Typeface.ITALIC)
-  }
+  private val italicCodeTypeface get() = typefaces.italic
+  private val boldItalicCodeTypeface get() = typefaces.boldItalic
 
   init {
-    textPaint.typeface = ReviewDiffTypefaces.regular
+    textPaint.typeface = typefaces.regular
     uiPaint.typeface = Typeface.DEFAULT_BOLD
   }
 
@@ -162,7 +165,7 @@ internal class ReviewDiffCanvasDrawing(context: Context) {
   }
 
   fun configureMonospacePaint(color: Int, size: Float, weight: String) {
-    textPaint.typeface = ReviewDiffTypefaces.forWeight(weight)
+    textPaint.typeface = typefaces.forWeight(weight)
     configureTextPaint(textPaint, color, size)
   }
 
@@ -171,9 +174,9 @@ internal class ReviewDiffCanvasDrawing(context: Context) {
     val italic = fontStyle and 1 != 0
     textPaint.typeface = when {
       tokenBold && italic -> boldItalicCodeTypeface
-      tokenBold -> ReviewDiffTypefaces.bold
+      tokenBold -> typefaces.bold
       italic -> italicCodeTypeface
-      else -> ReviewDiffTypefaces.forWeight(style.codeFontWeight)
+      else -> typefaces.forWeight(style.codeFontWeight)
     }
     configureTextPaint(textPaint, color, style.codeFontSizePx)
     textPaint.isUnderlineText = fontStyle and 4 != 0
@@ -521,13 +524,31 @@ internal class ReviewDiffCanvasDrawing(context: Context) {
     Color.argb(alpha, Color.red(color), Color.green(color), Color.blue(color))
 }
 
-private object ReviewDiffTypefaces {
-  val regular: Typeface = Typeface.create("monospace", Typeface.NORMAL)
-  private val medium: Typeface = Typeface.create("monospace-medium", Typeface.NORMAL)
-  val bold: Typeface = Typeface.create("monospace", Typeface.BOLD)
+private class ReviewDiffTypefaces(private val context: Context) {
+  var fontFamily: String = "monospace"
+  private val systemRegular = Typeface.create("monospace", Typeface.NORMAL)
+  private val systemMedium = Typeface.create("monospace-medium", Typeface.NORMAL)
+  private val systemBold = Typeface.create("monospace", Typeface.BOLD)
+  private val systemItalic = Typeface.create(systemRegular, Typeface.ITALIC)
+  private val systemBoldItalic = Typeface.create(systemBold, Typeface.ITALIC)
+  private val mesloItalic by lazy { Typeface.create(mesloRegular, Typeface.ITALIC) }
+  private val mesloBoldItalic by lazy { Typeface.create(mesloBold, Typeface.ITALIC) }
+  private val mesloRegular by lazy { loadAsset("fonts/MesloLGS-NF-Regular.ttf", systemRegular) }
+  private val mesloBold by lazy { loadAsset("fonts/MesloLGS-NF-Bold.ttf", systemBold) }
+  val regular: Typeface get() = if (fontFamily == "MesloLGS NF") mesloRegular else systemRegular
+  val bold: Typeface get() = if (fontFamily == "MesloLGS NF") mesloBold else systemBold
+
+  val italic: Typeface get() = if (fontFamily == "MesloLGS NF") mesloItalic else systemItalic
+  val boldItalic: Typeface get() = if (fontFamily == "MesloLGS NF") mesloBoldItalic else systemBoldItalic
+
+  private fun loadAsset(path: String, fallback: Typeface): Typeface = try {
+    Typeface.createFromAsset(context.assets, path)
+  } catch (_: RuntimeException) {
+    fallback
+  }
 
   fun forWeight(weight: String): Typeface = when (weight.lowercase()) {
-    "medium", "semibold", "semi-bold" -> medium
+    "medium", "semibold", "semi-bold" -> if (fontFamily == "MesloLGS NF") mesloBold else systemMedium
     "bold", "heavy", "black" -> bold
     else -> regular
   }

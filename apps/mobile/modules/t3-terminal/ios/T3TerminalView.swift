@@ -271,6 +271,13 @@ public final class T3TerminalView: ExpoView, UITextFieldDelegate {
     }
   }
 
+  var fontFamily: String = "meslo" {
+    didSet {
+      guard oldValue != fontFamily else { return }
+      refreshSurface()
+    }
+  }
+
   var focusRequest: Double = 0 {
     didSet {
       guard oldValue != focusRequest else { return }
@@ -782,7 +789,8 @@ public final class T3TerminalView: ExpoView, UITextFieldDelegate {
 
   private func writeThemeConfigFile() -> String? {
     guard !themeConfig.isEmpty else { return nil }
-    let configContents = themeConfig
+    let family = fontFamily == "system" ? "Menlo" : "MesloLGS NF"
+    let configContents = themeConfig + "\nfont-family = \(family)\n"
     let url = URL(fileURLWithPath: NSTemporaryDirectory())
       .appendingPathComponent("t3-terminal-theme-\(appearance.rawValue).ghostty")
 

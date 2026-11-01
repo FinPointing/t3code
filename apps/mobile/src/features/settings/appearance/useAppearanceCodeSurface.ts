@@ -10,23 +10,28 @@ import { useAppearancePreferences } from "./AppearancePreferencesProvider";
 
 export function useAppearanceCodeSurface(): {
   readonly codeSurface: ResolvedMobileCodeSurface;
+  readonly codeFontFamily: string;
   readonly codeWordBreak: boolean;
   readonly nativeSourceStyle: ReturnType<typeof createNativeSourceStyle>;
   readonly nativeReviewDiffStyle: ReturnType<typeof createNativeReviewDiffStyle>;
 } {
-  const { appearance } = useAppearancePreferences();
+  const { appearance, fonts } = useAppearancePreferences();
   const codeSurface = useMemo(
     () => resolveMobileCodeSurface(appearance.codeFontSize),
     [appearance.codeFontSize],
   );
-  const nativeSourceStyle = useMemo(() => createNativeSourceStyle(codeSurface), [codeSurface]);
+  const nativeSourceStyle = useMemo(
+    () => createNativeSourceStyle(codeSurface, fonts.code),
+    [codeSurface, fonts.code],
+  );
   const nativeReviewDiffStyle = useMemo(
-    () => createNativeReviewDiffStyle(codeSurface, appearance.codeWordBreak),
-    [appearance.codeWordBreak, codeSurface],
+    () => createNativeReviewDiffStyle(codeSurface, appearance.codeWordBreak, fonts.code),
+    [appearance.codeWordBreak, codeSurface, fonts.code],
   );
 
   return {
     codeSurface,
+    codeFontFamily: fonts.code,
     codeWordBreak: appearance.codeWordBreak,
     nativeSourceStyle,
     nativeReviewDiffStyle,

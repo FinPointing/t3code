@@ -14,6 +14,11 @@ those modes. Customize these shortcuts under **Settings → Keybindings**.
 On mobile, open **Settings → Appearance**. Mobile has its own themes and text,
 code, and terminal preferences. It does not follow environment themes or defaults.
 
+Choose separate fonts for interface text, prompts, code, and the terminal in mobile Appearance.
+Prompt font and size follow interface text until you override them. Choose **Follow interface**
+or turn off **Custom prompt size** to restore that relationship. The monospace choices include
+the bundled Meslo Nerd Font. Font choices and sizes are saved separately on each device.
+
 On Android 12 or newer, choose the **Material You** theme in Appearance to use colors from
 your wallpaper. Selecting another theme replaces those colors. Like other themes, Material You
 can be selected separately for light and dark appearances.

@@ -68,6 +68,7 @@ function opaqueNativeHexColor(color: string, background: string): string {
 export function createNativeReviewDiffStyle(
   codeSurface: ResolvedMobileCodeSurface,
   wordWrap: boolean,
+  codeFontFamily: string = "system",
 ) {
   return {
     wordWrap,
@@ -87,6 +88,7 @@ export function createNativeReviewDiffStyle(
     fileHeaderCountGap: 5,
     codeFontSize: codeSurface.fontSize,
     codeFontWeight: "regular",
+    codeFontFamily,
     lineNumberFontSize: codeSurface.lineNumberFontSize,
     lineNumberFontWeight: "regular",
     hunkFontSize: 11,

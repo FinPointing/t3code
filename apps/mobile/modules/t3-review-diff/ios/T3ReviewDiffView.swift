@@ -152,6 +152,7 @@ private struct ReviewDiffNativeStylePayload: Decodable {
   let fileHeaderPathRightPadding: Double?
   let fileHeaderCountColumnWidth: Double?
   let fileHeaderCountGap: Double?
+  let codeFontFamily: String?
   let codeFontSize: Double?
   let codeFontWeight: String?
   let lineNumberFontSize: Double?
@@ -186,6 +187,7 @@ private struct ReviewDiffNativeStyle: Equatable {
   let fileHeaderPathRightPadding: CGFloat
   let fileHeaderCountColumnWidth: CGFloat
   let fileHeaderCountGap: CGFloat
+  let codeFontFamily: String
   let codeFontSize: CGFloat
   let codeFontWeight: UIFont.Weight
   let lineNumberFontSize: CGFloat
@@ -220,6 +222,7 @@ private struct ReviewDiffNativeStyle: Equatable {
       fileHeaderPathRightPadding: metric(payload?.fileHeaderPathRightPadding, fallback: 128),
       fileHeaderCountColumnWidth: metric(payload?.fileHeaderCountColumnWidth, fallback: 42),
       fileHeaderCountGap: metric(payload?.fileHeaderCountGap, fallback: 6),
+      codeFontFamily: payload?.codeFontFamily ?? "Menlo",
       codeFontSize: metric(payload?.codeFontSize, fallback: 12),
       codeFontWeight: fontWeight(payload?.codeFontWeight, fallback: .bold),
       lineNumberFontSize: metric(payload?.lineNumberFontSize, fallback: 11),
@@ -295,6 +298,7 @@ private struct ReviewDiffNativeStyle: Equatable {
       fileHeaderPathRightPadding: fileHeaderPathRightPadding,
       fileHeaderCountColumnWidth: fileHeaderCountColumnWidth,
       fileHeaderCountGap: fileHeaderCountGap,
+      codeFontFamily: codeFontFamily,
       codeFontSize: codeFontSize,
       codeFontWeight: codeFontWeight,
       lineNumberFontSize: lineNumberFontSize,
@@ -1409,12 +1413,20 @@ private final class ReviewDiffContentView: UIView, UIGestureRecognizerDelegate {
     contentHeight = geometry.height
   }
 
+  private func selectedCodeFont(size: CGFloat, weight: UIFont.Weight) -> UIFont {
+    if style.codeFontFamily == "MesloLGS NF",
+       let font = UIFont(name: weight >= .semibold ? "MesloLGS-NF-Bold" : "MesloLGS-NF-Regular", size: size) {
+      return font
+    }
+    return UIFont.monospacedSystemFont(ofSize: size, weight: weight)
+  }
+
   private var codeFont: UIFont {
-    UIFont.monospacedSystemFont(ofSize: style.codeFontSize, weight: style.codeFontWeight)
+    selectedCodeFont(size: style.codeFontSize, weight: style.codeFontWeight)
   }
 
   private var lineNumberFont: UIFont {
-    UIFont.monospacedSystemFont(ofSize: style.lineNumberFontSize, weight: style.lineNumberFontWeight)
+    selectedCodeFont(size: style.lineNumberFontSize, weight: style.lineNumberFontWeight)
   }
 
   private var hunkFont: UIFont {

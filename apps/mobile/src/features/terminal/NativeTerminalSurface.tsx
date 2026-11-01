@@ -82,7 +82,7 @@ const FallbackTerminalSurface = memo(function FallbackTerminalSurface({
 }: ReadyTerminalSurfaceProps) {
   const fontSize = props.fontSize ?? MOBILE_TYPOGRAPHY.label.fontSize;
   const inputRef = useRef<TextInputInstance>(null);
-  const { themeAppearance, themeId } = useAppearancePreferences();
+  const { themeAppearance, themeId, fonts } = useAppearancePreferences();
   const theme = props.theme ?? getMobileTerminalTheme(themeId, themeAppearance);
   const statusLabel = props.readOnly
     ? "Viewing terminal output."
@@ -135,7 +135,7 @@ const FallbackTerminalSurface = memo(function FallbackTerminalSurface({
             selectable
             style={{
               color: theme.foreground,
-              fontFamily: "Menlo",
+              fontFamily: fonts.terminal,
               fontSize,
               lineHeight: Math.round(fontSize * 1.35),
             }}
@@ -163,7 +163,7 @@ const FallbackTerminalSurface = memo(function FallbackTerminalSurface({
           style={{
             color: theme.foreground,
             flex: 1,
-            fontFamily: "Menlo",
+            fontFamily: fonts.terminal,
             padding: 0,
           }}
           onSubmitEditing={(event) => {
@@ -201,7 +201,7 @@ export const TerminalSurface = memo(function TerminalSurface(props: TerminalSurf
 
 const ReadyTerminalSurface = memo(function ReadyTerminalSurface(props: ReadyTerminalSurfaceProps) {
   const fontSize = props.fontSize ?? MOBILE_TYPOGRAPHY.label.fontSize;
-  const { themeAppearance, themeId } = useAppearancePreferences();
+  const { themeAppearance, themeId, fonts } = useAppearancePreferences();
   const theme = props.theme ?? getMobileTerminalTheme(themeId, themeAppearance);
   const { onInput, onResize } = props;
   const NativeTerminalSurfaceView = resolveNativeTerminalSurfaceView();
@@ -267,6 +267,7 @@ const ReadyTerminalSurface = memo(function ReadyTerminalSurface(props: ReadyTerm
           terminalKey={props.terminalKey}
           initialBuffer={streaming ? "" : props.buffer}
           fontSize={fontSize}
+          fontFamily={fonts.terminalFontId ?? "meslo"}
           sharedGrid={sharedGrid}
           style={{ flex: 1 }}
           themeConfig={buildGhosttyThemeConfig(theme)}

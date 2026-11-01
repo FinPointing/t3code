@@ -60,6 +60,11 @@ class ReviewDiffGeometryTest {
       assertPosition(7, "after interrupted animation")
       parent.setStyleJson("{\"wordWrap\":true,\"codeFontSize\":22}")
       assertPosition(7, "font change")
+      parent.setStyleJson("{\"codeFontFamily\":\"MesloLGS NF\"}")
+      assertEquals("MesloLGS NF", (field(canvas, "style") as DiffStyle).codeFontFamily)
+      assertPosition(7, "font family change")
+      parent.setStyleJson("{\"codeFontFamily\":\"monospace\"}")
+      assertPosition(7, "font family reset")
       canvas.layout(0, 0, 280, 600)
       assertPosition(7, "wrapped width change")
       val height =

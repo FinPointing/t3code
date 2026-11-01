@@ -17,6 +17,11 @@ import {
   resolveAppearancePreferences,
   type ResolvedAppearance,
 } from "../../../lib/appearancePreferences";
+import {
+  resolveMobileFonts,
+  type ResolvedMobileFonts,
+  type MobileFontPreferences,
+} from "../../../lib/appearanceFonts";
 import { appAtomRegistry } from "../../../state/atom-registry";
 import { mobilePreferencesAtom, updateMobilePreferencesAtom } from "../../../state/preferences";
 import type { Preferences } from "../../../persistence/mobile-preferences";
@@ -46,6 +51,8 @@ import {
 
 interface AppearancePreferencesContextValue {
   readonly appearance: ResolvedAppearance;
+  readonly fonts: ResolvedMobileFonts;
+  readonly setFontPreferences: (patch: Partial<MobileFontPreferences>) => void;
   readonly themeId: MobileThemeId;
   readonly themeIds: MobileThemeIds;
   readonly themeMode: MobileThemeMode;
@@ -222,10 +229,15 @@ export function AppearancePreferencesProvider(props: { readonly children: ReactN
     () => resolveAppearance({ baseFontSize, codeFontSize, codeWordBreak, terminalFontSize }),
     [baseFontSize, codeFontSize, codeWordBreak, terminalFontSize],
   );
+  const fonts = useMemo(
+    () => resolveMobileFonts(storedPreferences, Platform.OS, appearance.baseFontSize),
+    [storedPreferences, appearance.baseFontSize],
+  );
   const isReady = AsyncResult.isSuccess(preferencesResult);
   const updatePreferences = (patch: Partial<Preferences>) => {
     startTransition(() => savePreferences(patch));
   };
+  const setFontPreferences = (patch: Partial<MobileFontPreferences>) => updatePreferences(patch);
 
   const updateThemePreferences = (patch: Partial<Preferences>) => {
     savePreferences(patch);
@@ -296,6 +308,8 @@ export function AppearancePreferencesProvider(props: { readonly children: ReactN
   const value = useMemo(
     (): AppearancePreferencesContextValue => ({
       appearance,
+      fonts,
+      setFontPreferences,
       themeId,
       themeIds,
       themeMode,
@@ -320,6 +334,8 @@ export function AppearancePreferencesProvider(props: { readonly children: ReactN
     }),
     [
       appearance,
+      fonts,
+      setFontPreferences,
       themeId,
       themeIds,
       themeMode,
@@ -346,7 +362,17 @@ export function AppearancePreferencesProvider(props: { readonly children: ReactN
   return (
     <AppearancePreferencesContext.Provider value={value}>
       <ScopedTheme theme={activeThemeName}>
-        <ScopedVariables variables={themeVariables}>{props.children}</ScopedVariables>
+        <ScopedVariables
+          variables={{
+            ...themeVariables,
+            "--font-sans": fonts.interface.regular,
+            "--font-medium": fonts.interface.medium,
+            "--font-bold": fonts.interface.bold,
+            "--font-mono": fonts.code,
+          }}
+        >
+          {props.children}
+        </ScopedVariables>
       </ScopedTheme>
     </AppearancePreferencesContext.Provider>
   );

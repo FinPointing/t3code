@@ -106,15 +106,40 @@ describe("mobile connection storage", () => {
     vi.clearAllMocks();
   });
 
-  it("persists tab order locally and retains it when another preference changes", async () => {
+  it("retains local navigation and font choices when another preference changes", async () => {
     const navigationTabOrder = ["usage", "threads", "pullRequests"];
     const hiddenNavigationTabs = ["issues", "home"];
-    await savePreferencesPatch({ navigationTabOrder, hiddenNavigationTabs });
+    await savePreferencesPatch({
+      navigationTabOrder,
+      hiddenNavigationTabs,
+      interfaceFontFamily: "serif",
+      promptFontFamily: "monospace",
+      codeFontFamily: "meslo",
+      terminalFontFamily: "system",
+      promptFontSize: 18,
+    });
     await savePreferencesPatch({ baseFontSize: 19 });
     await expect(loadPreferences()).resolves.toEqual({
       navigationTabOrder,
       hiddenNavigationTabs,
       baseFontSize: 19,
+      interfaceFontFamily: "serif",
+      promptFontFamily: "monospace",
+      codeFontFamily: "meslo",
+      terminalFontFamily: "system",
+      promptFontSize: 18,
+    });
+    await savePreferencesPatch({
+      promptFontFamily: null,
+      terminalFontFamily: null,
+      promptFontSize: null,
+    });
+    await expect(loadPreferences()).resolves.toMatchObject({
+      interfaceFontFamily: "serif",
+      codeFontFamily: "meslo",
+      promptFontFamily: null,
+      terminalFontFamily: null,
+      promptFontSize: null,
     });
   });
 
@@ -124,6 +149,11 @@ describe("mobile connection storage", () => {
         navigationTabOrder: ["usage", null, 4, "threads"],
         hiddenNavigationTabs: ["home", null],
         baseFontSize: 18,
+        interfaceFontFamily: "missing-font",
+        promptFontFamily: ["serif"],
+        terminalFontFamily: "meslo",
+        codeFontFamily: 1,
+        promptFontSize: "large",
       }),
       1,
     );
@@ -131,6 +161,7 @@ describe("mobile connection storage", () => {
       navigationTabOrder: ["usage", "threads"],
       hiddenNavigationTabs: ["home"],
       baseFontSize: 18,
+      terminalFontFamily: "meslo",
     });
   });
 

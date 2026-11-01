@@ -11,6 +11,7 @@ export const NATIVE_SOURCE_CONTENT_WIDTH = 32_000;
 
 export function createNativeSourceStyle(
   codeSurface: ResolvedMobileCodeSurface,
+  codeFontFamily: string = "system",
 ): NativeReviewDiffStyle {
   return {
     rowHeight: codeSurface.rowHeight,
@@ -21,6 +22,7 @@ export function createNativeSourceStyle(
     textVerticalInset: codeSurface.textVerticalInset,
     codeFontSize: codeSurface.fontSize,
     codeFontWeight: "regular",
+    codeFontFamily,
     lineNumberFontSize: codeSurface.lineNumberFontSize,
     lineNumberFontWeight: "regular",
     emptyStateFontSize: Math.round(

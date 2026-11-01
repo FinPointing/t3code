@@ -15,7 +15,6 @@ import { sourceControlClients } from "@t3tools/client-runtime/source-control-cli
 import { videoMimeType } from "@t3tools/shared/video";
 import { Platform, Pressable, ScrollView, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { REVIEW_MONO_FONT_FAMILY } from "../features/review/reviewDiffRendering";
 import { ReviewCommentCard, useReviewCommentColors } from "../features/review/ReviewCommentCard";
 import {
   composerAttachmentInlineUri,
@@ -32,6 +31,7 @@ import { useAppearancePreferences } from "../features/settings/appearance/Appear
 import { getMobileTerminalTheme } from "../features/terminal/terminalTheme";
 
 function ContextField(props: { label: string; value: string | null | undefined; code?: boolean }) {
+  const { fonts } = useAppearancePreferences();
   if (!props.value) return null;
   return (
     <View className="gap-1">
@@ -51,7 +51,7 @@ function ContextField(props: { label: string; value: string | null | undefined; 
         <Text
           selectable
           className={props.code ? "text-sm text-foreground" : "text-base text-foreground"}
-          style={props.code ? { fontFamily: REVIEW_MONO_FONT_FAMILY } : undefined}
+          style={props.code ? { fontFamily: fonts.code } : undefined}
         >
           {props.value}
         </Text>
@@ -98,7 +98,7 @@ export function ComposerContextSheet(props: {
   });
   const reviewColors = useReviewCommentColors();
   const insets = useSafeAreaInsets();
-  const { themeId, themeAppearance } = useAppearancePreferences();
+  const { themeId, themeAppearance, fonts } = useAppearancePreferences();
   const terminalTheme = getMobileTerminalTheme(themeId, themeAppearance);
   const record = props.record;
   const localAttachment =
@@ -232,7 +232,7 @@ export function ComposerContextSheet(props: {
                     selectable
                     className="text-sm text-foreground"
                     style={{
-                      fontFamily: REVIEW_MONO_FONT_FAMILY,
+                      fontFamily: fonts.code,
                       fontSize: 13,
                       lineHeight: 20,
                       color: terminalTheme.foreground,

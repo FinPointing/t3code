@@ -144,7 +144,6 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Animated, { FadeIn, FadeInUp, type SharedValue } from "react-native-reanimated";
 import { useUniwindTheme } from "../../lib/useUniwindTheme";
 import { IOS_NAV_BAR_HEIGHT } from "../../lib/layoutMetrics";
-import { FONT_FAMILIES } from "../../lib/fontFamilies";
 import { scopedThreadKey } from "../../lib/scopedEntities";
 import { copyTextWithHaptic } from "../../lib/copyTextWithHaptic";
 import { downloadAndShareAttachment } from "../../lib/attachmentDownload";
@@ -1221,8 +1220,9 @@ const AssistantMarkdownContent = memo(function AssistantMarkdownContent(props: {
 });
 
 function useMarkdownStyles(): MarkdownStyleSets {
-  const { appearance } = useAppearancePreferences();
+  const { appearance, fonts } = useAppearancePreferences();
   const nativeMarkdownTypography = resolveNativeMarkdownTypography(appearance.baseFontSize);
+  const promptTypography = resolveNativeMarkdownTypography(fonts.promptFontSize);
   const theme = useUniwindTheme();
   const markdownBodyColor = theme["--color-md-body"];
   const markdownStrongColor = theme["--color-md-strong"];
@@ -1242,8 +1242,8 @@ function useMarkdownStyles(): MarkdownStyleSets {
   const markdownUserCodeText = theme["--color-md-user-code-text"];
   const markdownUserInlineCodeText = theme["--color-user-bubble-foreground-muted"];
   const markdownUserFenceBg = theme["--color-md-user-fence-bg"];
-  const regularFontFamily = FONT_FAMILIES.regular;
-  const boldFontFamily = FONT_FAMILIES.bold;
+  const regularFontFamily = fonts.interface.regular;
+  const boldFontFamily = fonts.interface.bold;
 
   return {
     user: {
@@ -1260,12 +1260,12 @@ function useMarkdownStyles(): MarkdownStyleSets {
         quoteMarkerColor: markdownUserBodyColor,
         dividerColor: markdownUserBodyColor,
         contextChipBorderColor,
-        fontSize: nativeMarkdownTypography.fontSize,
-        lineHeight: nativeMarkdownTypography.lineHeight,
-        headingFontSizes: nativeMarkdownTypography.headingFontSizes,
-        fontFamily: regularFontFamily,
-        headingFontFamily: boldFontFamily,
-        boldFontFamily,
+        fontSize: promptTypography.fontSize,
+        lineHeight: promptTypography.lineHeight,
+        headingFontSizes: promptTypography.headingFontSizes,
+        fontFamily: fonts.prompt.regular,
+        headingFontFamily: fonts.prompt.bold,
+        boldFontFamily: fonts.prompt.bold,
       },
     },
     assistant: {
