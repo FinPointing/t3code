@@ -25,6 +25,7 @@ internal object TerminalTypefaces {
   private var loaded = false
   private var mesloRegular: Typeface = Typeface.MONOSPACE
   private var mesloBold: Typeface = Typeface.create(Typeface.MONOSPACE, Typeface.BOLD)
+  private val googleFontCache = mutableMapOf<String, Typeface>()
 
   @Suppress("TooGenericExceptionCaught") // Typeface.createFromAsset exposes RuntimeException.
   fun ensureLoaded(context: Context) {
@@ -38,11 +39,27 @@ internal object TerminalTypefaces {
     }
   }
 
-  fun getRegular(family: String): Typeface =
-    if (family == "system") Typeface.MONOSPACE else mesloRegular
+  private fun loadGoogleFont(family: String): Typeface = googleFontCache.getOrPut(family) {
+    val manager = com.facebook.react.common.assets.ReactFontManager.getInstance()
+    if (family in manager.customFontFamilies) {
+      manager.getTypeface(family, Typeface.NORMAL, null)
+    } else {
+      Typeface.MONOSPACE
+    }
+  }
 
-  fun getBold(family: String): Typeface =
-    if (family == "system") Typeface.create(Typeface.MONOSPACE, Typeface.BOLD) else mesloBold
+  fun getRegular(family: String): Typeface = when {
+    family == "MesloLGS NF" || family == "meslo" -> mesloRegular
+    family.startsWith("T3Google_") -> loadGoogleFont(family)
+    else -> Typeface.MONOSPACE
+  }
+
+  fun getBold(family: String): Typeface = when {
+    family == "MesloLGS NF" || family == "meslo" -> mesloBold
+    family.startsWith("T3Google_") -> Typeface.create(loadGoogleFont(family), Typeface.BOLD)
+    else -> Typeface.create(Typeface.MONOSPACE, Typeface.BOLD)
+  }
+
 }
 
 /**

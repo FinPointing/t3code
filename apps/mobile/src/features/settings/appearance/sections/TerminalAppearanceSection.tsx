@@ -36,6 +36,8 @@ export function TerminalAppearanceSection() {
         ]}
         disabled={!isReady}
         onChange={(terminalFontFamily) => setFontPreferences({ terminalFontFamily })}
+        googleFontsMonospaceOnly
+        onGoogleFontChange={(terminalFontFamily) => setFontPreferences({ terminalFontFamily })}
       />
       <SettingsSwitchRow
         disabled={!isReady}

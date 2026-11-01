@@ -65,6 +65,6 @@ SDK. The APK is under `apps/mobile/android/app/build/outputs/apk/release/`. Nati
 uses a 4 GiB Gradle heap, so use the hosted build while Horseman is sharing its memory with
 other services. The demo disables upstream OTA updates so it keeps running this fork's bundle.
 
-Font choices use bundled and platform fonts, not desktop's installed-font enumeration or CSS
+Font choices use bundled, platform, and downloaded Google Fonts, not desktop's installed-font enumeration or CSS
 font stacks. Desktop-only custom theme editing/import and glass effects are not added by this
 demo.

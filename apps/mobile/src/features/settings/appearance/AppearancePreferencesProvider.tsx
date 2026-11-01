@@ -49,9 +49,12 @@ import {
   type MobileThemeRuntimeState,
 } from "../../../lib/mobileThemeRuntime";
 
+import { useGoogleFontRuntime } from "./useGoogleFontRuntime";
+
 interface AppearancePreferencesContextValue {
   readonly appearance: ResolvedAppearance;
   readonly fonts: ResolvedMobileFonts;
+  readonly fontLoadingError: string | null;
   readonly setFontPreferences: (patch: Partial<MobileFontPreferences>) => void;
   readonly themeId: MobileThemeId;
   readonly themeIds: MobileThemeIds;
@@ -229,9 +232,16 @@ export function AppearancePreferencesProvider(props: { readonly children: ReactN
     () => resolveAppearance({ baseFontSize, codeFontSize, codeWordBreak, terminalFontSize }),
     [baseFontSize, codeFontSize, codeWordBreak, terminalFontSize],
   );
+  const googleFontRuntime = useGoogleFontRuntime(storedPreferences);
   const fonts = useMemo(
-    () => resolveMobileFonts(storedPreferences, Platform.OS, appearance.baseFontSize),
-    [storedPreferences, appearance.baseFontSize],
+    () =>
+      resolveMobileFonts(
+        storedPreferences,
+        Platform.OS,
+        appearance.baseFontSize,
+        googleFontRuntime.loadedIds,
+      ),
+    [storedPreferences, appearance.baseFontSize, googleFontRuntime.loadedIds],
   );
   const isReady = AsyncResult.isSuccess(preferencesResult);
   const updatePreferences = (patch: Partial<Preferences>) => {
@@ -309,6 +319,7 @@ export function AppearancePreferencesProvider(props: { readonly children: ReactN
     (): AppearancePreferencesContextValue => ({
       appearance,
       fonts,
+      fontLoadingError: googleFontRuntime.error,
       setFontPreferences,
       themeId,
       themeIds,
@@ -335,6 +346,7 @@ export function AppearancePreferencesProvider(props: { readonly children: ReactN
     [
       appearance,
       fonts,
+      googleFontRuntime.error,
       setFontPreferences,
       themeId,
       themeIds,

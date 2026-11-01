@@ -226,6 +226,13 @@
           ]
         }
       ]
+    },
+    {
+      "bundles": ["android", "ios", "assets", "mobile"],
+      "license": "OFL-1.1",
+      "name": "Inter font",
+      "noticeFile": "apps/mobile/assets/fonts/Inter-OFL.txt",
+      "sourceUrl": "https://github.com/rsms/inter"
     }
   ],
   "packageOverrides": [

@@ -36,7 +36,7 @@ export interface NativeTerminalSurfaceProps extends ViewProps {
   readonly terminalKey: string;
   readonly initialBuffer: string;
   readonly fontSize: number;
-  readonly fontFamily?: "system" | "meslo";
+  readonly fontFamily?: string;
   /** `[cols, rows]` of the shared PTY, or empty before the server reports one. */
   readonly sharedGrid?: ReadonlyArray<number>;
   readonly onInput?: (event: NativeSyntheticEvent<TerminalInputEvent>) => void;

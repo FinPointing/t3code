@@ -143,6 +143,31 @@ describe("mobile connection storage", () => {
     });
   });
 
+  it("migrates the old default and restores only valid Google font choices", async () => {
+    mocks.setPreferencesJson(
+      JSON.stringify({
+        interfaceFontFamily: "dm-sans",
+        promptFontFamily: "dm-sans",
+        codeFontFamily: "google:Roboto Mono",
+        terminalFontFamily: "google:Lora",
+        baseFontSize: 18,
+      }),
+      1,
+    );
+    await expect(loadPreferences()).resolves.toMatchObject({
+      interfaceFontFamily: "inter",
+      promptFontFamily: "inter",
+      codeFontFamily: "google:Roboto Mono",
+      baseFontSize: 18,
+    });
+    expect((await loadPreferences()).terminalFontFamily).toBeUndefined();
+    await savePreferencesPatch({ terminalFontFamily: "google:Fira Code" });
+    await expect(loadPreferences()).resolves.toMatchObject({
+      interfaceFontFamily: "inter",
+      terminalFontFamily: "google:Fira Code",
+    });
+  });
+
   it("ignores invalid tab-order entries without dropping other saved preferences", async () => {
     mocks.setPreferencesJson(
       JSON.stringify({

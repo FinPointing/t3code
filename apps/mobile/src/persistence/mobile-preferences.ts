@@ -21,7 +21,7 @@ import { isMicrophoneKind, type MicrophoneEntry } from "../lib/microphonePriorit
 import { MOBILE_THEME_IDS, type MobileThemeId, type MobileThemeMode } from "../lib/mobileTheme";
 import {
   isMobileMonoFontId,
-  isMobileTextFontId,
+  normalizeStoredTextFontId,
   type MobileFontPreferences,
 } from "../lib/appearanceFonts";
 import * as MobileDatabase from "./mobile-database";
@@ -273,10 +273,11 @@ function sanitizePreferences(parsed: Preferences): Preferences {
     preferences.androidNavigationStyle = parsed.androidNavigationStyle;
   }
   if (typeof parsed.baseFontSize === "number") preferences.baseFontSize = parsed.baseFontSize;
-  if (isMobileTextFontId(parsed.interfaceFontFamily))
-    preferences.interfaceFontFamily = parsed.interfaceFontFamily;
-  if (isMobileTextFontId(parsed.promptFontFamily) || parsed.promptFontFamily === null)
-    preferences.promptFontFamily = parsed.promptFontFamily;
+  const interfaceFontFamily = normalizeStoredTextFontId(parsed.interfaceFontFamily);
+  if (interfaceFontFamily !== undefined) preferences.interfaceFontFamily = interfaceFontFamily;
+  const promptFontFamily = normalizeStoredTextFontId(parsed.promptFontFamily);
+  if (promptFontFamily !== undefined || parsed.promptFontFamily === null)
+    preferences.promptFontFamily = promptFontFamily ?? null;
   if (isMobileMonoFontId(parsed.codeFontFamily)) preferences.codeFontFamily = parsed.codeFontFamily;
   if (isMobileMonoFontId(parsed.terminalFontFamily) || parsed.terminalFontFamily === null)
     preferences.terminalFontFamily = parsed.terminalFontFamily;

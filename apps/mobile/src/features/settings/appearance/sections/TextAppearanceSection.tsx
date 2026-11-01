@@ -36,6 +36,7 @@ export function TextAppearanceSection() {
         options={MOBILE_TEXT_FONT_IDS.map((id) => ({ id, title: MOBILE_TEXT_FONT_LABELS[id] }))}
         disabled={!isReady}
         onChange={(interfaceFontFamily) => setFontPreferences({ interfaceFontFamily })}
+        onGoogleFontChange={(interfaceFontFamily) => setFontPreferences({ interfaceFontFamily })}
       />
       <FontSizeSliderRow
         disabled={!isReady}
@@ -58,6 +59,7 @@ export function TextAppearanceSection() {
         ]}
         disabled={!isReady}
         onChange={(promptFontFamily) => setFontPreferences({ promptFontFamily })}
+        onGoogleFontChange={(promptFontFamily) => setFontPreferences({ promptFontFamily })}
       />
       <PromptAppearancePreview />
       <SettingsSwitchRow

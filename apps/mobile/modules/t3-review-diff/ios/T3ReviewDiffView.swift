@@ -1414,10 +1414,25 @@ private final class ReviewDiffContentView: UIView, UIGestureRecognizerDelegate {
   }
 
   private func selectedCodeFont(size: CGFloat, weight: UIFont.Weight) -> UIFont {
-    if style.codeFontFamily == "MesloLGS NF",
+    let family = if style.codeFontFamily.hasPrefix("T3Google_") {
+      String(style.codeFontFamily.dropFirst(9))
+    } else {
+      style.codeFontFamily
+    }
+
+    if family == "MesloLGS NF",
        let font = UIFont(name: weight >= .semibold ? "MesloLGS-NF-Bold" : "MesloLGS-NF-Regular", size: size) {
       return font
     }
+
+    if style.codeFontFamily.hasPrefix("T3Google_") {
+      let descriptor = UIFontDescriptor(fontAttributes: [
+        .family: family,
+        .traits: [UIFontDescriptor.TraitKey.weight: weight.rawValue],
+      ])
+      return UIFont(descriptor: descriptor, size: size)
+    }
+
     return UIFont.monospacedSystemFont(ofSize: size, weight: weight)
   }
 

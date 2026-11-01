@@ -29,7 +29,7 @@ describe("resolveMobileFonts", () => {
         16,
       ),
     ).toMatchObject({
-      interfaceFontId: "dm-sans",
+      interfaceFontId: "inter",
       codeFontId: "system",
       promptFontSize: 22,
     });

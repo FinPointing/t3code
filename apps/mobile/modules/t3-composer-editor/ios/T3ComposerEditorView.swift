@@ -429,7 +429,7 @@ public final class T3ComposerEditorView: ExpoView, UITextViewDelegate, UITextDro
     text: "#262626",
     placeholder: "#8e8e93"
   )
-  private var fontFamily = "DMSans-Regular"
+  private var fontFamily = "Inter-Regular"
   private var fontSize: CGFloat = 14
   private var lineHeight: CGFloat = 20
   private var contentInsetVertical: CGFloat = 0
@@ -934,8 +934,7 @@ public final class T3ComposerEditorView: ExpoView, UITextViewDelegate, UITextDro
   private func makeAttachmentString(_ token: ComposerTokenPayload) -> NSAttributedString {
     let color = token.accent.flatMap { UIColor(composerHex: $0) }
       ?? UIColor(composerHex: theme.text) ?? .label
-    let chipFont = UIFont(name: "DMSans-Medium", size: fontSize)
-      ?? UIFont.systemFont(ofSize: fontSize, weight: .medium)
+    let chipFont = editorFont(weight: .medium)
     let icon = token.iconUri.flatMap(iconImage(for:)).map {
       token.tintsIcon == true ? Self.tinted($0, color: color) : $0
     }
@@ -1060,9 +1059,20 @@ public final class T3ComposerEditorView: ExpoView, UITextViewDelegate, UITextDro
     return nil
   }
 
+  private func editorFont(weight: UIFont.Weight = .regular) -> UIFont {
+    if fontFamily.hasPrefix("T3Google_") {
+      let descriptor = UIFontDescriptor(fontAttributes: [
+        .family: String(fontFamily.dropFirst(9)),
+        .traits: [UIFontDescriptor.TraitKey.weight: weight.rawValue],
+      ])
+      return UIFont(descriptor: descriptor, size: fontSize)
+    }
+    let name = fontFamily == "Inter-Regular" && weight == .medium ? "Inter-Medium" : fontFamily
+    return UIFont(name: name, size: fontSize) ?? UIFont.systemFont(ofSize: fontSize, weight: weight)
+  }
+
   private func baseAttributes() -> [NSAttributedString.Key: Any] {
-    let font = UIFont(name: fontFamily, size: fontSize)
-      ?? UIFont.systemFont(ofSize: fontSize)
+    let font = editorFont()
     let paragraph = NSMutableParagraphStyle()
     paragraph.minimumLineHeight = lineHeight
     paragraph.maximumLineHeight = lineHeight
@@ -1074,8 +1084,7 @@ public final class T3ComposerEditorView: ExpoView, UITextViewDelegate, UITextDro
   }
 
   private func applyTypography() {
-    let font = UIFont(name: fontFamily, size: fontSize)
-      ?? UIFont.systemFont(ofSize: fontSize)
+    let font = editorFont()
     textView.font = font
     restoreBaseTypingAttributes()
     placeholderLabel.font = font

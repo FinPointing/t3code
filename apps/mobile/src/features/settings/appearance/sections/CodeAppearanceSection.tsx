@@ -36,6 +36,8 @@ export function CodeAppearanceSection() {
         options={MOBILE_MONO_FONT_IDS.map((id) => ({ id, title: MOBILE_MONO_FONT_LABELS[id] }))}
         disabled={!isReady}
         onChange={(codeFontFamily) => setFontPreferences({ codeFontFamily })}
+        googleFontsMonospaceOnly
+        onGoogleFontChange={(codeFontFamily) => setFontPreferences({ codeFontFamily })}
       />
       <SettingsSwitchRow
         disabled={!isReady}

@@ -60,7 +60,7 @@ function enrichedStyle(
       ...body,
       color: style.strongColor,
       fontFamily: style.headingFontFamily,
-      fontWeight: style.headingFontFamily === "DMSans-Bold" ? "normal" : "bold",
+      fontWeight: style.headingFontFamily === "Inter-Bold" ? "normal" : "bold",
       fontSize,
       lineHeight: fontSize * 1.35,
       marginTop: 8,
@@ -86,7 +86,7 @@ function enrichedStyle(
     strong: {
       color: style.strongColor,
       fontFamily: style.boldFontFamily,
-      fontWeight: style.boldFontFamily === "DMSans-Bold" ? "normal" : "bold",
+      fontWeight: style.boldFontFamily === "Inter-Bold" ? "normal" : "bold",
     },
     link: { color: style.linkColor, underline: false },
     code: {

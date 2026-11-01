@@ -9,8 +9,12 @@ import { TerminalAppearanceSection } from "./appearance/sections/TerminalAppeara
 import { TextAppearanceSection } from "./appearance/sections/TextAppearanceSection";
 import { ThemeAppearanceSection } from "./appearance/sections/ThemeAppearanceSection";
 
+import { useAppearancePreferences } from "./appearance/AppearancePreferencesProvider";
+import { AppText } from "../../components/ui/AppText";
+
 export function SettingsAppearanceRouteScreen() {
   const insets = useSafeAreaInsets();
+  const { fontLoadingError } = useAppearancePreferences();
 
   return (
     <SettingsScreen title="Appearance">
@@ -23,6 +27,11 @@ export function SettingsAppearanceRouteScreen() {
           paddingBottom: Math.max(insets.bottom, 18) + 18,
         }}
       >
+        {fontLoadingError ? (
+          <AppText accessibilityLiveRegion="polite" className="text-sm text-danger-foreground">
+            {fontLoadingError}
+          </AppText>
+        ) : null}
         <ThemeAppearanceSection />
         {Platform.OS === "android" ? <AndroidNavigationAppearanceSection /> : null}
         <TextAppearanceSection />

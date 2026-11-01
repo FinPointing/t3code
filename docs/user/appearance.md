@@ -17,7 +17,10 @@ code, and terminal preferences. It does not follow environment themes or default
 Choose separate fonts for interface text, prompts, code, and the terminal in mobile Appearance.
 Prompt font and size follow interface text until you override them. Choose **Follow interface**
 or turn off **Custom prompt size** to restore that relationship. The monospace choices include
-the bundled Meslo Nerd Font. Font choices and sizes are saved separately on each device.
+the bundled Meslo Nerd Font. Font choices and sizes are saved separately on each device. Inter is the default interface font.
+Choose **Google Fonts…** from any font picker to search the library and download a family. Code
+and terminal pickers show monospaced families. Search works offline; downloading a new font
+requires an internet connection. Downloaded fonts are saved on the device and reused offline.
 
 On Android 12 or newer, choose the **Material You** theme in Appearance to use colors from
 your wallpaper. Selecting another theme replaces those colors. Like other themes, Material You

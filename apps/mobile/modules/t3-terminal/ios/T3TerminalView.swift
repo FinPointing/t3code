@@ -789,7 +789,11 @@ public final class T3TerminalView: ExpoView, UITextFieldDelegate {
 
   private func writeThemeConfigFile() -> String? {
     guard !themeConfig.isEmpty else { return nil }
-    let family = fontFamily == "system" ? "Menlo" : "MesloLGS NF"
+    let family = if fontFamily.hasPrefix("T3Google_") {
+      String(fontFamily.dropFirst(9))
+    } else {
+      fontFamily
+    }
     let configContents = themeConfig + "\nfont-family = \(family)\n"
     let url = URL(fileURLWithPath: NSTemporaryDirectory())
       .appendingPathComponent("t3-terminal-theme-\(appearance.rawValue).ghostty")

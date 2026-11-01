@@ -531,15 +531,47 @@ private class ReviewDiffTypefaces(private val context: Context) {
   private val systemBold = Typeface.create("monospace", Typeface.BOLD)
   private val systemItalic = Typeface.create(systemRegular, Typeface.ITALIC)
   private val systemBoldItalic = Typeface.create(systemBold, Typeface.ITALIC)
-  private val mesloItalic by lazy { Typeface.create(mesloRegular, Typeface.ITALIC) }
-  private val mesloBoldItalic by lazy { Typeface.create(mesloBold, Typeface.ITALIC) }
   private val mesloRegular by lazy { loadAsset("fonts/MesloLGS-NF-Regular.ttf", systemRegular) }
   private val mesloBold by lazy { loadAsset("fonts/MesloLGS-NF-Bold.ttf", systemBold) }
-  val regular: Typeface get() = if (fontFamily == "MesloLGS NF") mesloRegular else systemRegular
-  val bold: Typeface get() = if (fontFamily == "MesloLGS NF") mesloBold else systemBold
+  private val mesloItalic by lazy { Typeface.create(mesloRegular, Typeface.ITALIC) }
+  private val mesloBoldItalic by lazy { Typeface.create(mesloBold, Typeface.ITALIC) }
+  private val googleFaces = mutableMapOf<String, Array<Typeface>>()
 
-  val italic: Typeface get() = if (fontFamily == "MesloLGS NF") mesloItalic else systemItalic
-  val boldItalic: Typeface get() = if (fontFamily == "MesloLGS NF") mesloBoldItalic else systemBoldItalic
+  private fun googleFace(style: Int): Typeface = googleFaces.getOrPut(fontFamily) {
+    val regular = com.facebook.react.common.assets.ReactFontManager.getInstance()
+      .getTypeface(fontFamily, Typeface.NORMAL, context.assets)
+    arrayOf(
+      regular,
+      Typeface.create(regular, Typeface.BOLD),
+      Typeface.create(regular, Typeface.ITALIC),
+      Typeface.create(regular, Typeface.BOLD_ITALIC),
+    )
+  }[style]
+
+  val regular: Typeface
+    get() = when {
+      fontFamily == "MesloLGS NF" -> mesloRegular
+      fontFamily.startsWith("T3Google_") -> googleFace(Typeface.NORMAL)
+      else -> systemRegular
+    }
+  val bold: Typeface
+    get() = when {
+      fontFamily == "MesloLGS NF" -> mesloBold
+      fontFamily.startsWith("T3Google_") -> googleFace(Typeface.BOLD)
+      else -> systemBold
+    }
+  val italic: Typeface
+    get() = when {
+      fontFamily == "MesloLGS NF" -> mesloItalic
+      fontFamily.startsWith("T3Google_") -> googleFace(Typeface.ITALIC)
+      else -> systemItalic
+    }
+  val boldItalic: Typeface
+    get() = when {
+      fontFamily == "MesloLGS NF" -> mesloBoldItalic
+      fontFamily.startsWith("T3Google_") -> googleFace(Typeface.BOLD_ITALIC)
+      else -> systemBoldItalic
+    }
 
   private fun loadAsset(path: String, fallback: Typeface): Typeface = try {
     Typeface.createFromAsset(context.assets, path)
@@ -548,7 +580,8 @@ private class ReviewDiffTypefaces(private val context: Context) {
   }
 
   fun forWeight(weight: String): Typeface = when (weight.lowercase()) {
-    "medium", "semibold", "semi-bold" -> if (fontFamily == "MesloLGS NF") mesloBold else systemMedium
+    "medium", "semibold", "semi-bold" ->
+      if (fontFamily == "MesloLGS NF" || fontFamily.startsWith("T3Google_")) bold else systemMedium
     "bold", "heavy", "black" -> bold
     else -> regular
   }

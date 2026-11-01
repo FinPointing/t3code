@@ -39,7 +39,7 @@ jobs:
         run: pnpm exec vp run --filter @t3tools/mobile typecheck
       - name: Test font preferences and terminal integration
         working-directory: apps/mobile
-        run: pnpm exec vp test run src/lib/appearanceFonts.test.ts src/lib/appearancePreferences.test.ts src/lib/storage.test.ts src/state/preferences.test.ts src/features/terminal/NativeTerminalSurface.test.tsx app.config.test.ts --maxWorkers=1
+        run: pnpm exec vp test run src/lib/appearanceFonts.test.ts src/lib/googleFonts.test.ts src/lib/googleFontDownloads.test.ts src/lib/appearancePreferences.test.ts src/lib/storage.test.ts src/state/preferences.test.ts src/features/terminal/NativeTerminalSurface.test.tsx app.config.test.ts --maxWorkers=1
       - name: Generate Android project
         working-directory: apps/mobile
         run: pnpm exec expo prebuild --clean --platform android --no-install
