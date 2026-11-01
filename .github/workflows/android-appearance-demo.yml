@@ -31,6 +31,8 @@ jobs:
           distribution: temurin
           java-version: "21"
       - uses: android-actions/setup-android@v3
+        with:
+          packages: platform-tools
       - name: Install mobile dependencies
         run: pnpm install --frozen-lockfile --filter @t3tools/mobile... --filter @t3tools/monorepo --child-concurrency 1
       - name: Check mobile types
