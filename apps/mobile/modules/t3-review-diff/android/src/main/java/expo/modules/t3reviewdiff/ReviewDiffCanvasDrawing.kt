@@ -531,10 +531,10 @@ private class ReviewDiffTypefaces(private val context: Context) {
   private val systemBold = Typeface.create("monospace", Typeface.BOLD)
   private val systemItalic = Typeface.create(systemRegular, Typeface.ITALIC)
   private val systemBoldItalic = Typeface.create(systemBold, Typeface.ITALIC)
-  private val mesloItalic by lazy { Typeface.create(mesloRegular, Typeface.ITALIC) }
-  private val mesloBoldItalic by lazy { Typeface.create(mesloBold, Typeface.ITALIC) }
   private val mesloRegular by lazy { loadAsset("fonts/MesloLGS-NF-Regular.ttf", systemRegular) }
   private val mesloBold by lazy { loadAsset("fonts/MesloLGS-NF-Bold.ttf", systemBold) }
+  private val mesloItalic by lazy { Typeface.create(mesloRegular, Typeface.ITALIC) }
+  private val mesloBoldItalic by lazy { Typeface.create(mesloBold, Typeface.ITALIC) }
   val regular: Typeface get() = if (fontFamily == "MesloLGS NF") mesloRegular else systemRegular
   val bold: Typeface get() = if (fontFamily == "MesloLGS NF") mesloBold else systemBold
 
