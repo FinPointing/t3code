@@ -12,6 +12,8 @@ concurrency:
 
 jobs:
   apk:
+    permissions:
+      contents: write
     runs-on: ubuntu-latest
     timeout-minutes: 60
     env:
@@ -52,3 +54,25 @@ jobs:
           path: apps/mobile/android/app/build/outputs/apk/release/*.apk
           if-no-files-found: error
           retention-days: 14
+      - name: Publish phone download
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          DEMO_COMMIT: ${{ github.sha }}
+        run: |
+          apk_path=apps/mobile/android/app/build/outputs/apk/release/app-release.apk
+          unzip -tq "$apk_path"
+          cp "$apk_path" "$RUNNER_TEMP/t3-appearance-demo-arm64.apk"
+          cat > "$RUNNER_TEMP/t3-demo-notes.md" <<'NOTES'
+          Android appearance preview with Inter as the default interface font and searchable Google Fonts for interface, prompt, code, and terminal text. Code and terminal choices are limited to monospace families. Selected fonts are cached for offline use.
+
+          On your Android phone, download `t3-appearance-demo-arm64.apk` below, open it, and allow your browser to install apps if Android asks. Open **T3 Appearance Demo**, then **Settings → Appearance** to try the font choices. It installs alongside the official app; no Expo Go or development server is needed.
+
+          This is a preview build signed with the demo key. Connect to your T3 Code server to use chat and terminal features.
+          NOTES
+          gh release create "android-fonts-preview-${DEMO_COMMIT:0:8}" \
+            --target "$DEMO_COMMIT" \
+            --title "Android font preview (${DEMO_COMMIT:0:8})" \
+            --prerelease \
+            --notes-file "$RUNNER_TEMP/t3-demo-notes.md" \
+            "$RUNNER_TEMP/t3-appearance-demo-arm64.apk"
